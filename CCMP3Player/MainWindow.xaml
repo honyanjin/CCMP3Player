@@ -26,10 +26,10 @@
             </Grid.RowDefinitions>
 
             <!-- 상단 컨트롤바 -->
-            <Grid Grid.Row="0" Background="#333333" Height="30">
+            <Grid Grid.Row="0" Background="WhiteSmoke" Height="30" Margin="25,0,25,0">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="✕" Width="30" Height="30" Background="Transparent" 
-                            Foreground="White" BorderThickness="0" Click="CloseButton_Click"/>
+                            Foreground="Black" BorderThickness="0" Click="CloseButton_Click"/>
                 </StackPanel>
             </Grid>
 

@@ -77,11 +77,11 @@
                     <StackPanel Grid.Row="2">
                         <!-- 재생, 일시정지, 정지 버튼 -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                            <Button x:Name="btnPrevious" Content="◀◀" Click="btnPrevious_Click" Style="{StaticResource ButtonStyle0}" Width="50" Margin="5"/>
-                            <Button x:Name="btnPlay" Content="▶" Click="btnPlay_Click" Style="{StaticResource ButtonStyle0}" Width="75" Margin="5"/>
-                            <Button x:Name="btnPause" Content="⏸" Click="btnPause_Click" Style="{StaticResource ButtonStyle0}" Width="75" Margin="5"/>
-                            <Button x:Name="btnStop" Content="⏹" Click="btnStop_Click" Style="{StaticResource ButtonStyle0}" Width="75" Margin="5"/>
-                            <Button x:Name="btnNext" Content="▶▶" Click="btnNext_Click" Style="{StaticResource ButtonStyle0}" Width="50" Margin="5"/>
+                            <Button x:Name="btnPrevious" Content="◀◀" Click="btnPrevious_Click" Style="{StaticResource ButtonStyle2}" Margin="5"/>
+                            <Button x:Name="btnPlay" Content="▶" Click="btnPlay_Click" Style="{StaticResource ButtonStyle3}"  Margin="5"/>
+                            <Button x:Name="btnPause" Content="⏸" Click="btnPause_Click" Style="{StaticResource ButtonStyle4}"  Margin="5"/>
+                            <Button x:Name="btnStop" Content="⏹" Click="btnStop_Click" Style="{StaticResource ButtonStyle1}"  Margin="5"/>
+                            <Button x:Name="btnNext" Content="▶▶" Click="btnNext_Click" Style="{StaticResource ButtonStyle2}"  Margin="5"/>
                         </StackPanel>
 
                         <!-- 볼륨 조절 슬라이더 -->
@@ -95,6 +95,14 @@
                                     ValueChanged="volumeSlider_ValueChanged" 
                                     Margin="5"
                                     Style="{StaticResource ModernSliderStyle}"/>
+                            
+                            <!-- 볼륨 퍼센트 표시 추가 -->
+                            <TextBlock x:Name="volumeValueText" 
+                                       Text="{Binding Value, ElementName=volumeSlider, StringFormat={}{0:P0}}" 
+                                       VerticalAlignment="Center" 
+                                       MinWidth="35"
+                                       Margin="5,5,0,5"/>
+                            
                         </StackPanel>
 
                         <!-- 재생 시간 표시 텍스트 -->
@@ -118,7 +126,11 @@
 
                     <Button x:Name="btnLoad" Content="Add MP3" Grid.Row="0" Click="btnLoad_Click" Style="{StaticResource ButtonStyle0}" Margin="5"/>
 
-                    <ListBox x:Name="playlistListBox" Grid.Row="1" Margin="5" SelectionChanged="playlistListBox_SelectionChanged" 
+                    <ListBox x:Name="playlistListBox" 
+                             Grid.Row="1" 
+                             Margin="5" 
+                             SelectionChanged="playlistListBox_SelectionChanged" 
+                             MouseDoubleClick="PlaylistListBox_MouseDoubleClick"
                              ScrollViewer.HorizontalScrollBarVisibility="Auto" 
                              ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <ListBox.ItemTemplate>

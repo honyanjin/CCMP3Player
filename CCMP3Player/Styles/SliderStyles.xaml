@@ -3,7 +3,7 @@
 
     <!-- 슬라이더 스타일 -->
     <Style x:Key="ModernSliderStyle" TargetType="Slider">
-        <Setter Property="Background" Value="#504B38"/>
+        <Setter Property="Background" Value="#C7D9DD"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Height" Value="25"/>
         <Setter Property="Template">
@@ -31,11 +31,21 @@
                                 <Thumb Width="16" Height="16">
                                     <Thumb.Template>
                                         <ControlTemplate TargetType="Thumb">
-                                            <Ellipse Fill="#ADB2D4"
-                                                 Stroke="#4A4A4A"
-                                                 StrokeThickness="1"
-                                                 Width="16"
-                                                 Height="16"/>
+                                            <!-- Ellipse에 이름 지정 -->
+                                            <Ellipse x:Name="thumbEllipse" 
+                                                     Fill="#ADB2D4"
+                                                     Stroke="#4A4A4A"
+                                                     StrokeThickness="1"
+                                                     Width="16"
+                                                     Height="16"/>
+                                            <!-- 트리거를 ControlTemplate 하위로 이동 -->
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="thumbEllipse" 
+                                                            Property="Fill" 
+                                                            Value="#C7D9DD"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Thumb.Template>
                                 </Thumb>

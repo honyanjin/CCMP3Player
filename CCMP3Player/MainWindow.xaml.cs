@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -44,7 +45,7 @@ namespace CCMP3Player
             // 기본 앨범 아트 로드
             try
             {
-                defaultAlbumArt = new BitmapImage(new Uri("pack://application:,,,/CCMP3Player;component/Resources/default_album.png"));
+                defaultAlbumArt = new BitmapImage(new Uri("pack://application:,,,/BaseRes/CMP_Icon.png"));
             }
             catch
             {
@@ -149,7 +150,6 @@ namespace CCMP3Player
 
         private BitmapImage GetAlbumArt(TagLib.File file)
         {
-            BitmapImage albumArt = null;
             try
             {
                 if (file.Tag.Pictures != null && file.Tag.Pictures.Length > 0)
@@ -157,33 +157,73 @@ namespace CCMP3Player
                     var picture = file.Tag.Pictures[0];
                     if (picture.Data != null && picture.Data.Data != null)
                     {
-                        albumArt = new BitmapImage();
-                        albumArt.BeginInit();
-                        albumArt.StreamSource = new MemoryStream(picture.Data.Data);
-                        albumArt.CacheOption = BitmapCacheOption.OnLoad;
-                        albumArt.EndInit();
-                        albumArt.Freeze();
+                        using (var stream = new MemoryStream(picture.Data.Data))
+                        {
+                            var bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.StreamSource = stream;
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile; // 색상 프로필 무시
+                            bitmap.EndInit();
+                            bitmap.Freeze();
+                            return bitmap;
+                        }
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // 이미지 로드 실패 시 기본 이미지 사용
+                Debug.WriteLine($"앨범 아트 로드 실패: {ex.Message}");
             }
 
-            // 앨범 아트가 없거나 로드 실패 시 기본 이미지 사용
-            return albumArt ?? defaultAlbumArt;
+            // 기본 이미지 로드 (안정화된 방식)
+            try
+            {
+                var defaultImage = new BitmapImage();
+                defaultImage.BeginInit();
+                defaultImage.UriSource = new Uri("pack://application:,,,/BaseRes/CMP_Icon.png");
+                defaultImage.CacheOption = BitmapCacheOption.OnLoad;
+                defaultImage.CreateOptions = BitmapCreateOptions.IgnoreColorProfile; // 동일 옵션 적용
+                defaultImage.EndInit();
+                defaultImage.Freeze();
+                return defaultImage;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"기본 이미지 로드 실패: {ex.Message}");
+                return new BitmapImage(); // 빈 이미지 반환
+            }
         }
 
         // 플레이리스트 ListBox에서 항목 선택 시 이벤트 핸들러
         private void playlistListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // 선택 시 UI만 업데이트 (재생은 하지 않음)
             if (playlistListBox.SelectedItem != null)
             {
                 var selectedTrack = playlistListBox.SelectedItem as TrackInfo;
                 if (selectedTrack != null)
                 {
-                    PlaySelectedTrack(selectedTrack);
+                    // 메타데이터 표시만 수행
+                    songTitleText.Text = selectedTrack.Title;
+                    artistText.Text = selectedTrack.Artist;
+                    albumText.Text = selectedTrack.Album;
+                    albumArtImage.Source = selectedTrack.AlbumArt;
+                }
+            }
+        }
+
+        // 새로 추가: 더블 클릭 시 재생
+        private void PlaylistListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true; // 이벤트 전파 중지
+
+            if (playlistListBox.SelectedItem != null)
+            {
+                var selectedTrack = playlistListBox.SelectedItem as TrackInfo;
+                if (selectedTrack != null)
+                {
+                    PlaySelectedTrack(selectedTrack); // 실제 재생 로직 호출
                 }
             }
         }
@@ -192,11 +232,12 @@ namespace CCMP3Player
         {
             try
             {
-                // 선택한 파일의 경로를 MediaElement의 Source로 지정하고 재생
+                // 4. 현재 재생 중인 미디어 중지 및 새 소스 로드
+                mediaElement.Stop();
                 mediaElement.Source = new Uri(track.FilePath);
                 mediaElement.Play();
 
-                // 메타데이터 표시
+                // 5. UI 실시간 동기화
                 songTitleText.Text = track.Title;
                 artistText.Text = track.Artist;
                 albumText.Text = track.Album;
@@ -204,21 +245,31 @@ namespace CCMP3Player
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error playing track: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"재생 오류: {ex.Message}", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Play 버튼 클릭 이벤트 핸들러
         private void btnPlay_Click(object sender, RoutedEventArgs e)
         {
-            if (mediaElement.Source != null)
+            // 1. 선택된 항목이 있는지 확인
+            if (playlistListBox.SelectedItem != null)
             {
-                mediaElement.Play();
+                // 2. 선택된 트랙을 명시적으로 재생
+                var selectedTrack = playlistListBox.SelectedItem as TrackInfo;
+                PlaySelectedTrack(selectedTrack);
             }
-            else if (playlistListBox.Items.Count > 0 && playlistListBox.SelectedIndex == -1)
+            else
             {
-                // 재생 중인 트랙이 없고 플레이리스트에 항목이 있는 경우 첫 번째 트랙 재생
-                playlistListBox.SelectedIndex = 0;
+                // 3. 선택된 항목이 없을 때 첫 번째 항목 자동 선택 및 재생
+                if (playlistListBox.Items.Count > 0)
+                {
+                    playlistListBox.SelectedIndex = 0;
+                    PlaySelectedTrack(playlist[0]);
+                }
+                else
+                {
+                    MessageBox.Show("플레이리스트가 비어 있습니다.", "알림", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
         }
 
@@ -267,29 +318,23 @@ namespace CCMP3Player
         // 이전 트랙 버튼 클릭 이벤트
         private void btnPrevious_Click(object sender, RoutedEventArgs e)
         {
-            if (playlistListBox.SelectedIndex > 0)
-            {
-                playlistListBox.SelectedIndex--;
-            }
-            else if (playlistListBox.Items.Count > 0)
-            {
-                // 첫 번째 트랙에서 이전 버튼 누르면 마지막 트랙으로 이동
-                playlistListBox.SelectedIndex = playlistListBox.Items.Count - 1;
-            }
+            if (playlistListBox.Items.Count == 0) return;
+
+            int newIndex = playlistListBox.SelectedIndex - 1;
+            if (newIndex < 0) newIndex = playlistListBox.Items.Count - 1; // 순환 재생
+            playlistListBox.SelectedIndex = newIndex;
+            PlaySelectedTrack(playlist[newIndex]); // 명시적으로 트랙 재생
         }
 
         // 다음 트랙 버튼 클릭 이벤트
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
-            if (playlistListBox.SelectedIndex < playlistListBox.Items.Count - 1)
-            {
-                playlistListBox.SelectedIndex++;
-            }
-            else if (playlistListBox.Items.Count > 0)
-            {
-                // 마지막 트랙에서 다음 버튼 누르면 첫 번째 트랙으로 이동
-                playlistListBox.SelectedIndex = 0;
-            }
+            if (playlistListBox.Items.Count == 0) return;
+
+            int newIndex = playlistListBox.SelectedIndex + 1;
+            if (newIndex >= playlistListBox.Items.Count) newIndex = 0; // 순환 재생
+            playlistListBox.SelectedIndex = newIndex;
+            PlaySelectedTrack(playlist[newIndex]); // 명시적으로 트랙 재생
         }
 
         // 트랙 끝나면 다음 트랙 자동 재생

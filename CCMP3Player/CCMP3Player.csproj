@@ -113,5 +113,8 @@
   <ItemGroup>
     <Resource Include="BaseRes\CMP_Icon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

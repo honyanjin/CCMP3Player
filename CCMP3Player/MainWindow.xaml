@@ -40,79 +40,163 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- 왼쪽 영역: 미디어 재생 및 컨트롤 -->
-                <Grid Grid.Column="0" Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- 앨범 아트 및 정보 -->
-                        <RowDefinition Height="Auto"/>
-                        <!-- 미디어 플레이어 -->
-                        <RowDefinition Height="Auto"/>
-                        <!-- 컨트롤 패널 -->
+                <Grid Grid.Column="0" Margin="10,0,0,0">
+                    <Grid.RowDefinitions>                        
+                        <RowDefinition Height="Auto"/> <!-- MediaElement: 미디어 재생 컨트롤 -->
+                        <RowDefinition Height="Auto"/> <!-- 앨범 아트 및 정보 -->
+                        <RowDefinition Height="Auto"/> <!-- 재생 컨트롤 패널 -->
+                        <RowDefinition Height="Auto"/> <!-- 선택한 노래 정보 -->
                     </Grid.RowDefinitions>
 
-                    <!-- 앨범 아트 및 정보 -->
-                    <Grid Grid.Row="0" Margin="0,0,0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- 앨범 아트 -->
-                        <Border Grid.Column="0" Width="120" Height="120" BorderBrush="#ADB2D4" BorderThickness="1" CornerRadius="5" Margin="0,0,10,0">
-                            <Image x:Name="albumArtImage" Stretch="UniformToFill" Source="/CCMP3Player;component/Resources/default_album.png"/>
-                        </Border>
-
-                        <!-- 노래 정보 -->
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock x:Name="songTitleText" Text="No Track Selected" FontSize="18" FontWeight="Bold" TextWrapping="Wrap"/>
-                            <TextBlock x:Name="artistText" Text="Unknown Artist" FontSize="14" Margin="0,5,0,0" TextWrapping="Wrap"/>
-                            <TextBlock x:Name="albumText" Text="Unknown Album" FontSize="12" Foreground="#666" Margin="0,5,0,0" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Grid>
-
                     <!-- MediaElement: 미디어 재생 컨트롤 -->
-                    <MediaElement Grid.Row="1" x:Name="mediaElement" LoadedBehavior="Manual" UnloadedBehavior="Stop" Height="0" MediaOpened="mediaElement_MediaOpened" MediaEnded="mediaElement_MediaEnded"/>
+                    <MediaElement Grid.Row="0"
+                                  x:Name="mediaElement" 
+                                  LoadedBehavior="Manual" 
+                                  UnloadedBehavior="Stop" Height="0" 
+                                  MediaOpened="mediaElement_MediaOpened" 
+                                  MediaEnded="mediaElement_MediaEnded"/>
+
+                    <!-- 앨범 아트 및 정보 -->
+                    <Grid Grid.Row="1" Margin="0,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <!-- "현재 재생중" 라벨을 위한 Row -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- 앨범 아트 및 정보 콘텐츠를 위한 Row -->
+                        </Grid.RowDefinitions>
+
+                        <!-- "현재 재생중" 라벨 -->
+                        <TextBlock x:Name="nowPlayingLabel"
+                                   Grid.Row="0" 
+                                   Text="~ 현재 재생중 ~" 
+                                   HorizontalAlignment="Center" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,5"
+                                   Foreground="#666"/>
+
+                        <!-- 기존 앨범 아트 및 정보 콘텐츠 -->
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- 앨범 아트 -->
+                            <Border Grid.Column="0" Width="120" Height="120" 
+                                    BorderBrush="#ADB2D4" BorderThickness="1" CornerRadius="5" 
+                                    Margin="0,0,10,0">
+                                <Image x:Name="albumArtImage" Stretch="UniformToFill" Source="/CCMP3Player;component/Resources/default_album.png"/>
+                            </Border>
+
+                            <!-- 노래 정보 -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock x:Name="songTitleText" Text="No Track Selected" FontSize="18" FontWeight="Bold" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="artistText" Text="Unknown Artist" FontSize="14" Margin="0,5,0,0" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="albumText" Text="Unknown Album" FontSize="12" Foreground="#666" Margin="0,5,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
 
                     <!-- 재생 컨트롤 패널 -->
                     <StackPanel Grid.Row="2">
                         <!-- 재생, 일시정지, 정지 버튼 -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                            <Button x:Name="btnPrevious" Content="◀◀" Click="btnPrevious_Click" Style="{StaticResource ButtonStyle2}" Margin="5"/>
-                            <Button x:Name="btnPlay" Content="▶" Click="btnPlay_Click" Style="{StaticResource ButtonStyle3}"  Margin="5"/>
-                            <Button x:Name="btnPause" Content="⏸" Click="btnPause_Click" Style="{StaticResource ButtonStyle4}"  Margin="5"/>
-                            <Button x:Name="btnStop" Content="⏹" Click="btnStop_Click" Style="{StaticResource ButtonStyle1}"  Margin="5"/>
-                            <Button x:Name="btnNext" Content="▶▶" Click="btnNext_Click" Style="{StaticResource ButtonStyle2}"  Margin="5"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button x:Name="btnPrevious" Content="◀◀" Click="btnPrevious_Click" Style="{StaticResource ButtonStyle_Pre}" Margin="5"/>
+                            <Button x:Name="btnPlay" Content="▶" Click="btnPlay_Click" Style="{StaticResource ButtonStyle_Play}"  Margin="5"/>
+                            <Button x:Name="btnPause" Content="⏸" Click="btnPause_Click" Style="{StaticResource ButtonStyle_Pause}"  Margin="5"/>
+                            <Button x:Name="btnStop" Content="⏹" Click="btnStop_Click" Style="{StaticResource ButtonStyle_Stop}"  Margin="5"/>
+                            <Button x:Name="btnNext" Content="▶▶" Click="btnNext_Click" Style="{StaticResource ButtonStyle_Next}"  Margin="5"/>
                         </StackPanel>
 
                         <!-- 볼륨 조절 슬라이더 -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
                             <TextBlock Text="Volume:" VerticalAlignment="Center" Margin="5"/>
                             <Slider x:Name="volumeSlider" 
                                     Minimum="0" 
                                     Maximum="1" 
                                     Value="0.5" 
-                                    Width="100" 
+                                    Width="150" 
                                     ValueChanged="volumeSlider_ValueChanged" 
                                     Margin="5"
                                     Style="{StaticResource ModernSliderStyle}"/>
-                            
+
                             <!-- 볼륨 퍼센트 표시 추가 -->
                             <TextBlock x:Name="volumeValueText" 
-                                       Text="{Binding Value, ElementName=volumeSlider, StringFormat={}{0:P0}}" 
-                                       VerticalAlignment="Center" 
-                                       MinWidth="35"
-                                       Margin="5,5,0,5"/>
-                            
+                                        Text="{Binding Value, ElementName=volumeSlider, StringFormat={}{0:P0}}" 
+                                        VerticalAlignment="Center" 
+                                        MinWidth="35"
+                                        Margin="5,5,0,5"/>
                         </StackPanel>
 
                         <!-- 재생 시간 표시 텍스트 -->
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-                            <TextBlock x:Name="playbackTimeText" Text="00:00 / 00:00" HorizontalAlignment="Center" Margin="5"/>
-                            <Slider x:Name="seekBar" Minimum="0" Maximum="100" Value="0" Width="250"
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0,0,0,0">
+                            <TextBlock x:Name="playbackTimeText" 
+                                       Text="00:00 / 00:00" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,0"/>
+                            <Slider x:Name="seekBar" Minimum="0" Maximum="100" Value="0"
                                     PreviewMouseDown="seekBar_PreviewMouseDown"
                                     PreviewMouseUp="seekBar_PreviewMouseUp"
-                                    Style="{StaticResource ModernSliderStyle}"/>
+                                    Style="{StaticResource ModernSliderStyle}" Width="300"/>
                         </StackPanel>
+                    </StackPanel>
+
+                    <!-- 선택한 노래 정보 -->
+                    <StackPanel Grid.Row="3" Margin="0,10,0,0">
+                        <TextBlock x:Name="selectedTrackLabel"
+                                   Text="~ 선택한 노래 정보 ~" 
+                                   HorizontalAlignment="Center" 
+                                   FontSize="14" 
+                                   FontWeight="Bold"
+                                   Foreground="#666"/>
+
+                        <!-- 선택한 노래 상세 정보 -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>                                
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Width="120" Height="120" 
+                                    BorderBrush="#ADB2D4" BorderThickness="1" CornerRadius="5" 
+                                    Margin="0,0,5,0">  
+                                <Image x:Name="albumArtImage_selected" Stretch="UniformToFill" Source="/CCMP3Player;component/Resources/default_album.png"/>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    BorderBrush="#ADB2D4" BorderThickness="1" 
+                                    CornerRadius="5" Padding="10" Margin="0,5,5,5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                
+
+                                <!-- 정보 라벨 -->
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="제목:" FontWeight="Bold" Margin="0,0,10,5"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="아티스트:" FontWeight="Bold" Margin="0,0,10,5"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="앨범:" FontWeight="Bold" Margin="0,0,10,5"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="파일 경로:" FontWeight="Bold" Margin="0,0,10,5"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="파일 크기:" FontWeight="Bold" Margin="0,0,10,5"/>
+
+                                <!-- 정보 값 -->
+                                <TextBlock x:Name="selectedTitleText" Grid.Row="0" Grid.Column="2" Text="-" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="selectedArtistText" Grid.Row="1" Grid.Column="2" Text="-" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="selectedAlbumText" Grid.Row="2" Grid.Column="2" Text="-" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="selectedPathText" Grid.Row="3" Grid.Column="2" Text="-" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="selectedFileSizeText" Grid.Row="4" Grid.Column="2" Text="-"/>
+                            </Grid>
+                        </Border>
+                        </Grid>
                     </StackPanel>
                 </Grid>
 

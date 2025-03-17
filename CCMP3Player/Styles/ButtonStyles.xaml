@@ -37,8 +37,8 @@
         </Setter>
     </Style>
 
-    <!-- 버튼 스타일 1 -->
-    <Style x:Key="ButtonStyle1" TargetType="Button">
+    <!-- 버튼 스타일 Stop -->
+    <Style x:Key="ButtonStyle_Stop" TargetType="Button">
         <Setter Property="Background" Value="#ADB2D4"/>
         <Setter Property="Foreground" Value="#FF232323"/>
         <Setter Property="FontFamily" Value="Arial"/>
@@ -78,8 +78,8 @@
         </Setter>
     </Style>
 
-    <!-- 버튼 스타일 2 -->
-    <Style x:Key="ButtonStyle2" TargetType="Button">
+    <!-- 버튼 스타일 Pre -->
+    <Style x:Key="ButtonStyle_Pre" TargetType="Button">
         <Setter Property="Background" Value="#ADB2D4"/>
         <Setter Property="Foreground" Value="#FF232323"/>
         <Setter Property="FontFamily" Value="Arial"/>
@@ -95,7 +95,7 @@
                     Background="{TemplateBinding Background}"
                     Width="{TemplateBinding Width}"
                     Height="{TemplateBinding Height}"
-                    CornerRadius="10,10,10,10"
+                    CornerRadius="15,10,10,15"
                     BorderThickness="1"
                     BorderBrush="#FF232323">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -119,8 +119,49 @@
         </Setter>
     </Style>
 
-    <!-- 버튼 스타일 3 -->
-    <Style x:Key="ButtonStyle3" TargetType="Button">
+    <!-- 버튼 스타일 Next -->
+    <Style x:Key="ButtonStyle_Next" TargetType="Button">
+        <Setter Property="Background" Value="#ADB2D4"/>
+        <Setter Property="Foreground" Value="#FF232323"/>
+        <Setter Property="FontFamily" Value="Arial"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Width" Value="35"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <!-- 원형 버튼 -->
+                    <Border x:Name="border" 
+                Background="{TemplateBinding Background}"
+                Width="{TemplateBinding Width}"
+                Height="{TemplateBinding Height}"
+                CornerRadius="10,15,15,10"
+                BorderThickness="1"
+                BorderBrush="#FF232323">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- 호버 효과 -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#C7D9DD"/>
+                        </Trigger>
+                        <!-- 클릭 효과 -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#D5E5D5"/>
+                        </Trigger>
+                        <!-- 비활성화 시 효과 -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="border" Property="Background" Value="Gray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 버튼 스타일 Play -->
+    <Style x:Key="ButtonStyle_Play" TargetType="Button">
         <Setter Property="Background" Value="#ADB2D4"/>
         <Setter Property="Foreground" Value="#FF232323"/>
         <Setter Property="FontFamily" Value="Arial"/>
@@ -160,8 +201,8 @@
         </Setter>
     </Style>
 
-    <!-- 버튼 스타일 4 -->
-    <Style x:Key="ButtonStyle4" TargetType="Button">
+    <!-- 버튼 스타일 Pause -->
+    <Style x:Key="ButtonStyle_Pause" TargetType="Button">
         <Setter Property="Background" Value="#ADB2D4"/>
         <Setter Property="Foreground" Value="#FF232323"/>
         <Setter Property="FontFamily" Value="Arial"/>

@@ -20,6 +20,7 @@ namespace CCMP3Player
         public string Artist { get; set; }
         public string Album { get; set; }
         public BitmapImage AlbumArt { get; set; }
+        public string FileSize { get; set; } // 새로 추가
     }
 
     public partial class MainWindow : Window
@@ -123,6 +124,10 @@ namespace CCMP3Player
 
                     // 표시 이름 설정
                     trackInfo.DisplayName = $"{trackInfo.Title} - {trackInfo.Artist}";
+
+                    // 파일 크기 계산 (MB 단위)
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    trackInfo.FileSize = $"{fileInfo.Length / 1024.0 / 1024.0:0.00} MB";
                 }
 
                 playlist.Add(trackInfo);
@@ -198,17 +203,18 @@ namespace CCMP3Player
         // 플레이리스트 ListBox에서 항목 선택 시 이벤트 핸들러
         private void playlistListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // 선택 시 UI만 업데이트 (재생은 하지 않음)
             if (playlistListBox.SelectedItem != null)
             {
                 var selectedTrack = playlistListBox.SelectedItem as TrackInfo;
                 if (selectedTrack != null)
-                {
-                    // 메타데이터 표시만 수행
-                    songTitleText.Text = selectedTrack.Title;
-                    artistText.Text = selectedTrack.Artist;
-                    albumText.Text = selectedTrack.Album;
-                    albumArtImage.Source = selectedTrack.AlbumArt;
+                {                    
+                    // 선택한 노래 정보 영역 업데이트
+                    selectedTitleText.Text = selectedTrack.Title;
+                    selectedArtistText.Text = selectedTrack.Artist;
+                    selectedAlbumText.Text = selectedTrack.Album;
+                    selectedPathText.Text = selectedTrack.FilePath;
+                    selectedFileSizeText.Text = selectedTrack.FileSize;
+                    albumArtImage_selected.Source = selectedTrack.AlbumArt;
                 }
             }
         }
@@ -409,4 +415,7 @@ namespace CCMP3Player
             seekBar.Value = 0;
         }
     }
+
+
+    
 }

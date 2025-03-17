@@ -56,6 +56,7 @@
                                   MediaOpened="mediaElement_MediaOpened" 
                                   MediaEnded="mediaElement_MediaEnded"/>
 
+
                     <!-- 앨범 아트 및 정보 -->
                     <Grid Grid.Row="1" Margin="0,0,0,0">
                         <Grid.RowDefinitions>
@@ -141,6 +142,7 @@
                                     Style="{StaticResource ModernSliderStyle}" Width="300"/>
                         </StackPanel>
                     </StackPanel>
+
 
                     <!-- 선택한 노래 정보 -->
                     <StackPanel Grid.Row="3" Margin="0,10,0,0">
